@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Sistem Kehadiran V2.2</title>
+
+  <!-- QR SCANNER -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+
+      margin: 0;
+
+      min-height: 100vh;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      background:
+        linear-gradient(
+          135deg,
+          #eef2ff,
+          #f8fafc
+        );
+
+      color: #0f172a;
+
+    }
+
+
+    .container {
+
+      width: 100%;
+
+      max-width: 650px;
+
+      margin: auto;
+
+      padding: 25px 16px 50px;
+
+    }
+
+
+    /* HEADER */
+
+    .header {
+
+      text-align: center;
+
+      margin-bottom: 20px;
+
+    }
+
+
+    .logo {
+
+      width: 70px;
+
+      height: 70px;
+
+      margin: auto;
+
+      border-radius: 20px;
+
+      background: #0f172a;
+
+      color: white;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      font-size: 32px;
+
+      font-weight: bold;
+
+    }
+
+
+    h1 {
+
+      margin:
+        15px 0 5px;
+
+      font-size: 27px;
+
+    }
+
+
+    .subtitle {
+
+      color: #64748b;
+
+      font-size: 14px;
+
+      line-height: 1.5;
+
+    }
+
+
+    /* CARD */
+
+    .card {
+
+      background: white;
+
+      border-radius: 24px;
+
+      padding: 25px;
+
+      box-shadow:
+        0 15px 40px
+        rgba(
+          15,
+          23,
+          42,
+          0.10
+        );
+
+    }
+
+
+    /* FORM */
+
+    label {
+
+      display: block;
+
+      font-weight: bold;
+
+      font-size: 14px;
+
+      margin-bottom: 8px;
+
+    }
+
+
+    input,
+    select {
+
+      width: 100%;
+
+      padding: 15px;
+
+      border:
+        1px solid #cbd5e1;
+
+      border-radius: 14px;
+
+      font-size: 16px;
+
+      outline: none;
+
+      background: white;
+
+      margin-bottom: 18px;
+
+    }
+
+
+    input:focus,
+    select:focus {
+
+      border-color: #4f46e5;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(
+          79,
+          70,
+          229,
+          .10
+        );
+
+    }
+
+
+    /* BUTTON */
+
+    button {
+
+      width: 100%;
+
+      border: none;
+
+      border-radius: 15px;
+
+      padding: 16px;
+
+      font-size: 16px;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      transition: .2s;
+
+    }
+
+
+    button:active {
+
+      transform:
+        scale(.98);
+
+    }
+
+
+    button:disabled {
+
+      background:
+        #94a3b8 !important;
+
+      cursor: not-allowed;
+
+    }
+
+
+    .scan-button {
+
+      background:
+        #0f172a;
+
+      color: white;
+
+    }
+
+
+    .scan-button:hover {
+
+      background:
+        #1e293b;
+
+    }
+
+
+    .submit-button {
+
+      background:
+        #4f46e5;
+
+      color: white;
+
+      margin-top: 12px;
+
+    }
+
+
+    .submit-button:hover {
+
+      background:
+        #4338ca;
+
+    }
+
+
+    /* SCANNER */
+
+    #reader {
+
+      width: 100%;
+
+      margin-top: 18px;
+
+      border-radius: 18px;
+
+      overflow: hidden;
+
+      display: none;
+
+      background: #000;
+
+    }
+
+
+    #reader video {
+
+      border-radius: 18px;
+
+    }
+
+
+    /* STATUS */
+
+    .status {
+
+      display: none;
+
+      padding: 14px;
+
+      margin-top: 15px;
+
+      border-radius: 13px;
+
+      font-weight: bold;
+
+      line-height: 1.5;
+
+    }
+
+
+    .status.success {
+
+      display: block;
+
+      background:
+        #dcfce7;
+
+      color:
+        #166534;
+
+    }
+
+
+    .status.error {
+
+      display: block;
+
+      background:
+        #fee2e2;
+
+      color:
+        #991b1b;
+
+    }
+
+
+    .status.warning {
+
+      display: block;
+
+      background:
+        #fef3c7;
+
+      color:
+        #92400e;
+
+    }
+
+
+    /* VERIFIED */
+
+    .verified {
+
+      display: none;
+
+      margin-top: 15px;
+
+      padding: 16px;
+
+      border-radius: 16px;
+
+      background:
+        #ecfdf5;
+
+      border:
+        1px solid #86efac;
+
+      color:
+        #166534;
+
+    }
+
+
+    .verified-title {
+
+      font-size: 18px;
+
+      font-weight: bold;
+
+      margin-bottom: 5px;
+
+    }
+
+
+    /* INFO */
+
+    .info {
+
+      margin-top: 20px;
+
+      padding: 15px;
+
+      background:
+        #f8fafc;
+
+      border-radius: 15px;
+
+      font-size: 13px;
+
+      color:
+        #475569;
+
+      line-height: 1.7;
+
+    }
+
+
+    /* LOADING */
+
+    .loader {
+
+      display: inline-block;
+
+      width: 17px;
+
+      height: 17px;
+
+      border:
+        3px solid
+        rgba(
+          255,
+          255,
+          255,
+          .4
+        );
+
+      border-top-color:
+        white;
+
+      border-radius: 50%;
+
+      animation:
+        spin .8s linear infinite;
+
+      vertical-align: middle;
+
+      margin-right: 8px;
+
+    }
+
+
+    @keyframes spin {
+
+      to {
+        transform:
+          rotate(360deg);
+      }
+
+    }
+
+
+    .hidden {
+
+      display:
+        none !important;
+
+    }
+
+
+    /* FOOTER */
+
+    .footer {
+
+      text-align:
+        center;
+
+      color:
+        #94a3b8;
+
+      font-size:
+        12px;
+
+      margin-top:
+        20px;
+
+    }
+
+
+    /* MOBILE */
+
+    @media (
+      max-width: 500px
+    ) {
+
+      .container {
+
+        padding-top:
+          15px;
+
+      }
+
+
+      .card {
+
+        padding:
+          20px;
+
+      }
+
+
+      h1 {
+
+        font-size:
+          23px;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+    <div class="logo">
+      ✓
+    </div>
+
+    <h1>
+      Sistem Kehadiran
+    </h1>
+
+    <div class="subtitle">
+
+      Sila lengkapkan maklumat
+      sebelum mengimbas QR rasmi
+
+    </div>
+
+  </div>
+
+
+  <!-- FORM -->
+
+  <div class="card">
+
+    <form id="attendanceForm">
+
+
+      <!-- NAMA -->
+
+      <label for="staffName">
+        Nama
+      </label>
+
+      <input
+        type="text"
+        id="staffName"
+        placeholder="Masukkan nama penuh"
+        autocomplete="name"
+        required
+      >
+
+
+      <!-- JAWATAN -->
+
+      <label for="jawatan">
+        Jawatan
+      </label>
+
+      <select
+        id="jawatan"
+        required
+      >
+
+        <option value="">
+          -- Pilih Jawatan --
+        </option>
+
+        <option>Ketua Jabatan</option>
+
+        <option>Pakar Perunding</option>
+
+        <option>Pakar Orthopedik</option>
+
+        <option>Pegawai Perubatan</option>
+
+        <option>Ketua Penyelia</option>
+
+        <option>Penyelia Ketua Jururawat</option>
+
+        <option>Ketua Jururawat</option>
+
+        <option>Penyelia</option>
+
+        <option>
+          Penolong Pegawai Perubatan
+        </option>
+
+        <option>Jururawat</option>
+
+        <option>
+          Pembantu Perawatan Kesihatan
+        </option>
+
+        <option>Pembantu Tadbir</option>
+
+      </select>
+
+
+      <!-- JENIS KEHADIRAN -->
+
+      <label for="attendanceType">
+        Jenis Kehadiran
+      </label>
+
+      <select
+        id="attendanceType"
+        required
+      >
+
+        <option value="">
+          -- Pilih Jenis Kehadiran --
+        </option>
+
+        <option>
+          Mesyuarat Jabatan
+        </option>
+
+        <option>
+          Ward Round
+        </option>
+
+        <option>
+          CME
+        </option>
+
+        <option>
+          Mesyuarat M&M
+        </option>
+
+        <option>
+          Kehadiran Klinik
+        </option>
+
+      </select>
+
+
+      <!-- STATUS -->
+
+      <div
+        id="status"
+        class="status"
+      ></div>
+
+
+      <!-- QR READER -->
+
+      <div
+        id="reader"
+      ></div>
+
+
+      <!-- VERIFIED -->
+
+      <div
+        id="verified"
+        class="verified"
+      >
+
+        <div
+          class="verified-title"
+        >
+          ✓ QR SAH
+        </div>
+
+        <div id="verifiedText">
+
+          QR rasmi telah disahkan.
+
+        </div>
+
+      </div>
+
+
+      <!-- SCAN -->
+
+      <button
+        type="button"
+        id="scanButton"
+        class="scan-button"
+      >
+
+        📷 Imbas QR & Sahkan
+
+      </button>
+
+
+      <!-- SUBMIT -->
+
+      <button
+        type="submit"
+        id="submitButton"
+        class="submit-button hidden"
+      >
+
+        ✓ SAHKAN & HANTAR KEHADIRAN
+
+      </button>
+
+
+      <!-- INFO -->
+
+      <div class="info">
+
+        <b>Cara penggunaan:</b>
+
+        <br>
+
+        1. Masukkan nama.
+
+        <br>
+
+        2. Pilih jawatan.
+
+        <br>
+
+        3. Pilih jenis kehadiran.
+
+        <br>
+
+        4. Tekan
+        <b>Imbas QR & Sahkan</b>.
+
+        <br>
+
+        5. Imbas QR rasmi.
+
+        <br>
+
+        6. Selepas QR disahkan,
+        tekan
+        <b>SAHKAN & HANTAR KEHADIRAN</b>.
+
+        <br><br>
+
+        QR rasmi berubah setiap
+        <b>30 saat</b>.
+
+      </div>
+
+
+    </form>
+
+  </div>
+
+
+  <div class="footer">
+
+    Sistem Kehadiran V2.2
+
+  </div>
+
+
+</div>
+
+
+<script>
+
+
+// =====================================================
+// URL GOOGLE APPS SCRIPT V2
+// =====================================================
+//
+// GANTIKAN DENGAN URL WEB APP V2 ANDA
+//
+// =====================================================
+
+const GOOGLE_SCRIPT_URL =
+  'https://script.google.com/macros/s/AKfycby99zRyyduobmriX7MbuO3EVXkFw6VcxnrkoiuY-7aNr5IiON00MHE5l-CtDQpl-zcw-A/exec';
+
+
+// =====================================================
+// VARIABLES
+// =====================================================
+
+let scanner = null;
+
+let scannerRunning = false;
+
+let qrVerified = false;
+
+let scannedToken = '';
+
+let verifying = false;
+
+
+// =====================================================
+// ELEMENTS
+// =====================================================
+
+const form =
+  document.getElementById(
+    'attendanceForm'
+  );
+
+const scanButton =
+  document.getElementById(
+    'scanButton'
+  );
+
+const submitButton =
+  document.getElementById(
+    'submitButton'
+  );
+
+const reader =
+  document.getElementById(
+    'reader'
+  );
+
+const statusBox =
+  document.getElementById(
+    'status'
+  );
+
+const verified =
+  document.getElementById(
+    'verified'
+  );
+
+const verifiedText =
+  document.getElementById(
+    'verifiedText'
+  );
+
+
+// =====================================================
+// STATUS
+// =====================================================
+
+function showStatus(
+  message,
+  type
+) {
+
+  statusBox.textContent =
+    message;
+
+  statusBox.className =
+    'status ' + type;
+
+}
+
+
+function hideStatus() {
+
+  statusBox.textContent =
+    '';
+
+  statusBox.className =
+    'status';
+
+}
+
+
+// =====================================================
+// CHECK CONFIGURATION
+// =====================================================
+
+function checkConfiguration() {
+
+  if (
+
+    !GOOGLE_SCRIPT_URL ||
+
+    GOOGLE_SCRIPT_URL ===
+      'MASUKKAN_URL_WEB_APP_V2_DI_SINI'
+
+  ) {
+
+    showStatus(
+
+      'URL Google Apps Script V2 belum dimasukkan ke dalam index.html.',
+
+      'error'
+
+    );
+
+    scanButton.disabled =
+      true;
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+// =====================================================
+// SCAN BUTTON
+// =====================================================
+
+scanButton.addEventListener(
+  'click',
+  startScanner
+);
+
+
+// =====================================================
+// START SCANNER
+// =====================================================
+
+async function startScanner() {
+
+
+  if (
+    !checkConfiguration()
+  ) {
+
+    return;
+
+  }
+
+
+  const name =
+    document
+      .getElementById(
+        'staffName'
+      )
+      .value
+      .trim();
+
+
+  const jawatan =
+    document
+      .getElementById(
+        'jawatan'
+      )
+      .value;
+
+
+  const type =
+    document
+      .getElementById(
+        'attendanceType'
+      )
+      .value;
+
+
+  if (!name) {
+
+    showStatus(
+      'Sila masukkan nama.',
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  if (!jawatan) {
+
+    showStatus(
+      'Sila pilih jawatan.',
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  if (!type) {
+
+    showStatus(
+      'Sila pilih jenis kehadiran.',
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  qrVerified =
+    false;
+
+  scannedToken =
+    '';
+
+  verified.style.display =
+    'none';
+
+  submitButton.classList.add(
+    'hidden'
+  );
+
+  hideStatus();
+
+
+  reader.style.display =
+    'block';
+
+  scanButton.disabled =
+    true;
+
+  scanButton.textContent =
+    '📷 Kamera sedang dibuka...';
+
+
+  try {
+
+
+    scanner =
+      new Html5Qrcode(
+        'reader'
+      );
+
+
+    const config = {
+
+      fps: 10,
+
+      qrbox: {
+
+        width: 250,
+
+        height: 250
+
+      },
+
+      aspectRatio: 1.0
+
+    };
+
+
+    await scanner.start(
+
+      {
+        facingMode:
+          'environment'
+      },
+
+      config,
+
+      onScanSuccess,
+
+      onScanFailure
+
+    );
+
+
+    scannerRunning =
+      true;
+
+
+    scanButton.textContent =
+      '📷 Halakan kamera kepada QR';
+
+
+  }
+
+  catch (error) {
+
+    console.error(
+      'CAMERA ERROR:',
+      error
+    );
+
+
+    reader.style.display =
+      'none';
+
+    scanButton.disabled =
+      false;
+
+    scanButton.textContent =
+      '📷 Imbas QR & Sahkan';
+
+
+    showStatus(
+
+      'Kamera tidak dapat dibuka. Pastikan kebenaran kamera diberikan.',
+
+      'error'
+
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// QR SCAN SUCCESS
+// =====================================================
+
+function onScanSuccess(
+  decodedText
+) {
+
+
+  if (
+    verifying ||
+    qrVerified
+  ) {
+
+    return;
+
+  }
+
+
+  const token =
+    String(
+      decodedText || ''
+    ).trim();
+
+
+  if (!token) {
+
+    return;
+
+  }
+
+
+  verifying =
+    true;
+
+  scannedToken =
+    token;
+
+
+  console.log(
+    'QR TOKEN DIKESAN:',
+    token
+  );
+
+
+  showStatus(
+
+    'QR dikesan. Sedang mengesahkan dengan server...',
+
+    'warning'
+
+  );
+
+
+  stopScanner()
+    .then(
+      verifyToken
+    );
+
+}
+
+
+// =====================================================
+// QR SCAN FAILURE
+// =====================================================
+
+function onScanFailure(
+  error
+) {
+
+  // Sengaja kosong.
+  // Scanner terus mencari QR.
+
+}
+
+
+// =====================================================
+// VERIFY TOKEN
+// =====================================================
+
+async function verifyToken() {
+
+
+  try {
+
+
+    console.log(
+      'VERIFY → SERVER:',
+      GOOGLE_SCRIPT_URL
+    );
+
+
+    /*
+     * PENTING:
+     *
+     * Kita gunakan Content-Type yang sama
+     * seperti qr.html V2.2 yang berjaya.
+     */
+
+    const response =
+      await fetch(
+
+        GOOGLE_SCRIPT_URL,
+
+        {
+
+          method:
+            'POST',
+
+          headers: {
+
+            'Content-Type':
+              'text/plain;charset=utf-8'
+
+          },
+
+          body:
+            JSON.stringify({
+
+              action:
+                'verifyQR',
+
+              token:
+                scannedToken
+
+            }),
+
+          cache:
+            'no-store'
+
+        }
+
+      );
+
+
+    console.log(
+      'VERIFY HTTP STATUS:',
+      response.status
+    );
+
+
+    const result =
+      await response.json();
+
+
+    console.log(
+      'VERIFY RESPONSE:',
+      result
+    );
+
+
+    verifying =
+      false;
+
+
+    if (
+      !result ||
+      !result.valid
+    ) {
+
+
+      qrVerified =
+        false;
+
+      scannedToken =
+        '';
+
+
+      verified.style.display =
+        'none';
+
+
+      submitButton.classList.add(
+        'hidden'
+      );
+
+
+      scanButton.disabled =
+        false;
+
+
+      scanButton.textContent =
+        '📷 Imbas QR Semula';
+
+
+      showStatus(
+
+        result &&
+        result.message
+
+          ? result.message
+
+          : 'QR tidak sah.',
+
+        'error'
+
+      );
+
+
+      return;
+
+    }
+
+
+    // ---------------------------------------------
+    // QR SAH
+    // ---------------------------------------------
+
+    qrVerified =
+      true;
+
+
+    verified.style.display =
+      'block';
+
+
+    verifiedText.textContent =
+      'QR rasmi telah disahkan. Anda boleh menghantar rekod kehadiran.';
+
+
+    submitButton.classList.remove(
+      'hidden'
+    );
+
+
+    scanButton.disabled =
+      false;
+
+
+    scanButton.textContent =
+      '✓ QR Telah Disahkan';
+
+
+    showStatus(
+
+      '✓ QR sah. Sila tekan butang HANTAR untuk merekodkan kehadiran.',
+
+      'success'
+
+    );
+
+
+  }
+
+  catch (error) {
+
+
+    console.error(
+      'VERIFY ERROR:',
+      error
+    );
+
+
+    verifying =
+      false;
+
+
+    qrVerified =
+      false;
+
+
+    scannedToken =
+      '';
+
+
+    scanButton.disabled =
+      false;
+
+
+    scanButton.textContent =
+      '📷 Imbas QR Semula';
+
+
+    showStatus(
+
+      'Tidak dapat berhubung dengan server. Sila cuba lagi.',
+
+      'error'
+
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// STOP SCANNER
+// =====================================================
+
+async function stopScanner() {
+
+
+  if (
+    !scanner ||
+    !scannerRunning
+  ) {
+
+    reader.style.display =
+      'none';
+
+    return;
+
+  }
+
+
+  try {
+
+    await scanner.stop();
+
+    scanner.clear();
+
+  }
+
+  catch (error) {
+
+    console.log(
+      'SCANNER STOP:',
+      error
+    );
+
+  }
+
+
+  scannerRunning =
+    false;
+
+
+  reader.style.display =
+    'none';
+
+}
+
+
+// =====================================================
+// SUBMIT FORM
+// =====================================================
+
+form.addEventListener(
+  'submit',
+  submitAttendance
+);
+
+
+async function submitAttendance(
+  event
+) {
+
+
+  event.preventDefault();
+
+
+  if (
+    !qrVerified ||
+    !scannedToken
+  ) {
+
+    showStatus(
+
+      'Sila imbas dan sahkan QR rasmi terlebih dahulu.',
+
+      'error'
+
+    );
+
+    return;
+
+  }
+
+
+  const name =
+    document
+      .getElementById(
+        'staffName'
+      )
+      .value
+      .trim();
+
+
+  const jawatan =
+    document
+      .getElementById(
+        'jawatan'
+      )
+      .value;
+
+
+  const type =
+    document
+      .getElementById(
+        'attendanceType'
+      )
+      .value;
+
+
+  if (
+    !name ||
+    !jawatan ||
+    !type
+  ) {
+
+    showStatus(
+
+      'Sila lengkapkan semua maklumat.',
+
+      'error'
+
+    );
+
+    return;
+
+  }
+
+
+  const id =
+    createRecordId();
+
+
+  submitButton.disabled =
+    true;
+
+
+  submitButton.innerHTML =
+    '<span class="loader"></span>' +
+    'Menyimpan Rekod...';
+
+
+  showStatus(
+
+    'Sedang menghantar rekod ke Google Sheet...',
+
+    'warning'
+
+  );
+
+
+  try {
+
+
+    console.log(
+      'SUBMIT → SERVER:',
+      GOOGLE_SCRIPT_URL
+    );
+
+
+    const response =
+      await fetch(
+
+        GOOGLE_SCRIPT_URL,
+
+        {
+
+          method:
+            'POST',
+
+          headers: {
+
+            'Content-Type':
+              'text/plain;charset=utf-8'
+
+          },
+
+          body:
+            JSON.stringify({
+
+              action:
+                'submitAttendance',
+
+              id:
+                id,
+
+              name:
+                name,
+
+              jawatan:
+                jawatan,
+
+              type:
+                type,
+
+              qrToken:
+                scannedToken
+
+            }),
+
+          cache:
+            'no-store'
+
+        }
+
+      );
+
+
+    console.log(
+      'SUBMIT HTTP STATUS:',
+      response.status
+    );
+
+
+    const result =
+      await response.json();
+
+
+    console.log(
+      'SUBMIT RESPONSE:',
+      result
+    );
+
+
+    if (
+      !result ||
+      !result.success
+    ) {
+
+      throw new Error(
+
+        result &&
+        result.message
+
+          ? result.message
+
+          : 'Rekod gagal disimpan.'
+
+      );
+
+    }
+
+
+    // ---------------------------------------------
+    // SUCCESS
+    // ---------------------------------------------
+
+    showStatus(
+
+      '✓ ' +
+      result.message +
+      (
+        result.date
+
+          ? ' ' +
+            result.date +
+            ' ' +
+            result.time
+
+          : ''
+      ),
+
+      'success'
+
+    );
+
+
+    // RESET
+
+    document
+      .getElementById(
+        'staffName'
+      )
+      .value =
+      '';
+
+
+    document
+      .getElementById(
+        'jawatan'
+      )
+      .value =
+      '';
+
+
+    document
+      .getElementById(
+        'attendanceType'
+      )
+      .value =
+      '';
+
+
+    qrVerified =
+      false;
+
+
+    scannedToken =
+      '';
+
+
+    verified.style.display =
+      'none';
+
+
+    submitButton.classList.add(
+      'hidden'
+    );
+
+
+    scanButton.disabled =
+      false;
+
+
+    scanButton.textContent =
+      '📷 Imbas QR & Sahkan';
+
+
+  }
+
+  catch (error) {
+
+
+    console.error(
+      'SUBMIT ERROR:',
+      error
+    );
+
+
+    showStatus(
+
+      error.message ||
+      'Ralat semasa menghantar rekod.',
+
+      'error'
+
+    );
+
+  }
+
+
+  finally {
+
+    submitButton.disabled =
+      false;
+
+
+    submitButton.innerHTML =
+      '✓ SAHKAN & HANTAR KEHADIRAN';
+
+  }
+
+}
+
+
+// =====================================================
+// CREATE RECORD ID
+// =====================================================
+
+function createRecordId() {
+
+
+  if (
+    window.crypto &&
+    crypto.randomUUID
+  ) {
+
+    return crypto.randomUUID();
+
+  }
+
+
+  return (
+
+    Date.now() +
+    '-' +
+    Math.random()
+      .toString(36)
+      .substring(2, 12)
+
+  );
+
+}
+
+
+// =====================================================
+// STARTUP
+// =====================================================
+
+checkConfiguration();
+
+
+</script>
+
+
+</body>
+
+</html>
