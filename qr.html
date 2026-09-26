@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>QR Kehadiran V2.3</title>
+
+
+  <!-- =====================================================
+       QR CODE LIBRARY
+       ===================================================== -->
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+  </script>
+
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+
+    html,
+    body {
+
+      width: 100%;
+      height: 100%;
+
+      margin: 0;
+      padding: 0;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      background:
+        linear-gradient(
+          135deg,
+          #0f172a,
+          #1e293b
+        );
+
+      color: white;
+
+      overflow: hidden;
+
+    }
+
+
+    .page {
+
+      width: 100%;
+      height: 100%;
+
+      min-height: 100vh;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 20px;
+
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .header {
+
+      text-align: center;
+
+      margin-bottom: 18px;
+
+    }
+
+
+    .title {
+
+      font-size:
+        clamp(
+          26px,
+          4vw,
+          50px
+        );
+
+      font-weight: 800;
+
+      letter-spacing: 1px;
+
+      margin-bottom: 7px;
+
+    }
+
+
+    .subtitle {
+
+      font-size:
+        clamp(
+          14px,
+          2vw,
+          21px
+        );
+
+      opacity: .75;
+
+    }
+
+
+    /* =====================================================
+       CARD
+       ===================================================== */
+
+    .card {
+
+      background: white;
+
+      color: #0f172a;
+
+      border-radius: 28px;
+
+      padding:
+        clamp(
+          18px,
+          3vw,
+          32px
+        );
+
+      width:
+        min(
+          92vw,
+          560px
+        );
+
+      text-align: center;
+
+      box-shadow:
+        0 25px 70px
+        rgba(
+          0,
+          0,
+          0,
+          .40
+        );
+
+    }
+
+
+    /* =====================================================
+       LOGIN FORM
+       ===================================================== */
+
+    .login-title {
+
+      font-size:
+        clamp(
+          20px,
+          3vw,
+          26px
+        );
+
+      font-weight: 800;
+
+      color: #0f172a;
+
+      margin-bottom: 6px;
+
+    }
+
+
+    .login-subtitle {
+
+      font-size: 14px;
+
+      color: #64748b;
+
+      margin-bottom: 22px;
+
+    }
+
+
+    .login-field {
+
+      text-align: left;
+
+      margin-bottom: 16px;
+
+    }
+
+
+    .login-field label {
+
+      display: block;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      color: #334155;
+
+      margin-bottom: 6px;
+
+      letter-spacing: .3px;
+
+    }
+
+
+    .login-field input {
+
+      width: 100%;
+
+      padding: 13px 15px;
+
+      font-size: 15px;
+
+      color: #0f172a;
+
+      background: #f1f5f9;
+
+      border: 2px solid #e2e8f0;
+
+      border-radius: 12px;
+
+      outline: none;
+
+      transition:
+        border-color .2s,
+        background .2s;
+
+      font-family: inherit;
+
+    }
+
+
+    .login-field input:focus {
+
+      border-color: #4f46e5;
+
+      background: #ffffff;
+
+    }
+
+
+    .login-btn {
+
+      width: 100%;
+
+      padding: 14px;
+
+      margin-top: 6px;
+
+      font-size: 16px;
+
+      font-weight: 800;
+
+      letter-spacing: .5px;
+
+      color: white;
+
+      background: #4f46e5;
+
+      border: none;
+
+      border-radius: 12px;
+
+      cursor: pointer;
+
+      transition:
+        background .2s,
+        transform .1s;
+
+      font-family: inherit;
+
+    }
+
+
+    .login-btn:hover {
+
+      background: #4338ca;
+
+    }
+
+
+    .login-btn:active {
+
+      transform: scale(.98);
+
+    }
+
+
+    .login-error {
+
+      min-height: 20px;
+
+      margin-top: 12px;
+
+      font-size: 14px;
+
+      font-weight: bold;
+
+      color: #dc2626;
+
+    }
+
+
+    .login-hint {
+
+      margin-top: 18px;
+
+      font-size: 12px;
+
+      color: #94a3b8;
+
+    }
+
+
+    /* =====================================================
+       QR
+       ===================================================== */
+
+    #qrcode {
+
+      width: 100%;
+
+      min-height: 300px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      background: white;
+
+    }
+
+
+    #qrcode img,
+    #qrcode canvas {
+
+      display: block;
+
+      width:
+        min(
+          70vw,
+          420px
+        ) !important;
+
+      height:
+        min(
+          70vw,
+          420px
+        ) !important;
+
+      max-width: 100%;
+
+      max-height: 100%;
+
+    }
+
+
+    /* =====================================================
+       LOADING
+       ===================================================== */
+
+    .loading {
+
+      text-align: center;
+
+      color: #64748b;
+
+      font-size: 17px;
+
+    }
+
+
+    .spinner {
+
+      width: 36px;
+
+      height: 36px;
+
+      margin:
+        0 auto 12px;
+
+      border:
+        4px solid
+        #e2e8f0;
+
+      border-top-color:
+        #4f46e5;
+
+      border-radius: 50%;
+
+      animation:
+        spin .8s linear infinite;
+
+    }
+
+
+    @keyframes spin {
+
+      to {
+
+        transform:
+          rotate(360deg);
+
+      }
+
+    }
+
+
+    /* =====================================================
+       COUNTDOWN
+       ===================================================== */
+
+    .countdown-label {
+
+      margin-top: 17px;
+
+      color: #64748b;
+
+      font-size: 15px;
+
+    }
+
+
+    .countdown {
+
+      margin-top: 5px;
+
+      min-height: 60px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      font-size:
+        clamp(
+          34px,
+          5vw,
+          60px
+        );
+
+      line-height: 1;
+
+      font-weight: 900;
+
+      color: #4f46e5;
+
+      font-variant-numeric:
+        tabular-nums;
+
+    }
+
+
+    .countdown.warning {
+
+      color: #d97706;
+
+    }
+
+
+    .countdown.danger {
+
+      color: #dc2626;
+
+      animation:
+        pulse .6s infinite alternate;
+
+    }
+
+
+    @keyframes pulse {
+
+      from {
+        transform: scale(1);
+      }
+
+      to {
+        transform: scale(1.08);
+      }
+
+    }
+
+
+    /* =====================================================
+       SLOT
+       ===================================================== */
+
+    .slot {
+
+      margin-top: 6px;
+
+      font-size: 12px;
+
+      color: #94a3b8;
+
+      word-break: break-all;
+
+    }
+
+
+    /* =====================================================
+       STATUS
+       ===================================================== */
+
+    .status {
+
+      margin-top: 14px;
+
+      min-height: 20px;
+
+      font-size: 14px;
+
+      color: #64748b;
+
+    }
+
+
+    .status.online {
+
+      color: #15803d;
+
+      font-weight: bold;
+
+    }
+
+
+    .status.error {
+
+      color: #dc2626;
+
+      font-weight: bold;
+
+    }
+
+
+    .status.loading {
+
+      color: #d97706;
+
+    }
+
+
+    /* =====================================================
+       LOGOUT BUTTON
+       ===================================================== */
+
+    .logout-btn {
+
+      margin-top: 16px;
+
+      padding: 10px 22px;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      letter-spacing: .5px;
+
+      color: #dc2626;
+
+      background: transparent;
+
+      border: 2px solid #dc2626;
+
+      border-radius: 10px;
+
+      cursor: pointer;
+
+      transition:
+        background .2s,
+        color .2s;
+
+      font-family: inherit;
+
+    }
+
+
+    .logout-btn:hover {
+
+      background: #dc2626;
+
+      color: white;
+
+    }
+
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .footer {
+
+      margin-top: 17px;
+
+      text-align: center;
+
+      font-size: 13px;
+
+      opacity: .55;
+
+    }
+
+
+    /* =====================================================
+       UTILITY
+       ===================================================== */
+
+    .hidden {
+
+      display: none !important;
+
+    }
+
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (
+      max-width: 600px
+    ) {
+
+      .page {
+
+        padding: 12px;
+
+      }
+
+
+      .header {
+
+        margin-bottom: 10px;
+
+      }
+
+
+      .card {
+
+        width: 94vw;
+
+        padding: 18px;
+
+        border-radius: 22px;
+
+      }
+
+
+      #qrcode {
+
+        min-height: 240px;
+
+      }
+
+
+      #qrcode img,
+      #qrcode canvas {
+
+        width:
+          min(
+            72vw,
+            320px
+          ) !important;
+
+        height:
+          min(
+            72vw,
+            320px
+          ) !important;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<div class="page">
+
+
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
+
+  <div class="header">
+
+    <div class="title">
+      SISTEM KEHADIRAN
+    </div>
+
+    <div class="subtitle">
+      Imbas QR untuk pengesahan kehadiran
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       LOGIN CARD
+       ===================================================== -->
+
+  <div
+    id="loginCard"
+    class="card"
+  >
+
+    <div class="login-title">
+      LOG MASUK 
+    </div>
+
+    <div class="login-subtitle">
+      Sila masukkan
+    </div>
+
+
+    <div class="login-field">
+
+      <label for="usernameInput">
+        USERNAME
+      </label>
+
+      <input
+        type="text"
+        id="usernameInput"
+        placeholder="Masukkan username"
+        autocomplete="username"
+      >
+
+    </div>
+
+
+    <div class="login-field">
+
+      <label for="passwordInput">
+        PASSWORD
+      </label>
+
+      <input
+        type="password"
+        id="passwordInput"
+        placeholder="Masukkan password"
+        autocomplete="current-password"
+      >
+
+    </div>
+
+
+    <button
+      id="loginBtn"
+      class="login-btn"
+    >
+      LOG MASUK
+    </button>
+
+
+    <div
+      id="loginError"
+      class="login-error"
+    ></div>
+
+
+    <div class="login-hint">
+      Hanya admin yang dibenarkan mengakses sistem ini.
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       QR CARD
+       ===================================================== -->
+
+  <div
+    id="qrCard"
+    class="card hidden"
+  >
+
+
+    <!-- QR -->
+
+    <div id="qrcode">
+
+      <div class="loading">
+
+        <div class="spinner"></div>
+
+        Menyediakan QR...
+
+      </div>
+
+    </div>
+
+
+    <!-- COUNTDOWN -->
+
+    <div class="countdown-label">
+
+      QR akan berubah dalam
+
+    </div>
+
+
+    <div
+      id="countdown"
+      class="countdown"
+    >
+      --s
+    </div>
+
+
+    <!-- SLOT -->
+
+    <div
+      id="slot"
+      class="slot"
+    >
+      Slot: --
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div
+      id="status"
+      class="status loading"
+    >
+      Menghubungkan ke server...
+    </div>
+
+
+    <!-- LOGOUT -->
+
+    <button
+      id="logoutBtn"
+      class="logout-btn"
+    >
+      LOG KELUAR
+    </button>
+
+
+  </div>
+
+
+  <div class="footer">
+
+    Sistem Kehadiran V2.3
+
+  </div>
+
+
+</div>
+
+
+<script>
+
+
+/* =========================================================
+   KONFIGURASI
+   ========================================================= */
+
+const GOOGLE_SCRIPT_URL =
+  'https://script.google.com/macros/s/AKfycby99zRyyduobmriX7MbuO3EVXkFw6VcxnrkoiuY-7aNr5IiON00MHE5l-CtDQpl-zcw-A/exec';
+
+
+/* =========================================================
+   LOGIN CREDENTIALS
+   ========================================================= */
+
+const ADMIN_USERNAME = 'admin';
+
+const ADMIN_PASSWORD = 'admin123';
+
+
+/* =========================================================
+   TETAPAN
+   ========================================================= */
+
+const QR_INTERVAL_SECONDS = 30;
+
+const QR_INTERVAL_MS =
+  QR_INTERVAL_SECONDS * 1000;
+
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+let currentToken = '';
+
+let currentSlot = null;
+
+let nextChangeTime = 0;
+
+let loadingQR = false;
+
+let lastLoadedSlot = null;
+
+let isLoggedIn = false;
+
+let countdownIntervalId = null;
+
+let backupIntervalId = null;
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const loginCard =
+  document.getElementById(
+    'loginCard'
+  );
+
+const qrCard =
+  document.getElementById(
+    'qrCard'
+  );
+
+const usernameInput =
+  document.getElementById(
+    'usernameInput'
+  );
+
+const passwordInput =
+  document.getElementById(
+    'passwordInput'
+  );
+
+const loginBtn =
+  document.getElementById(
+    'loginBtn'
+  );
+
+const loginError =
+  document.getElementById(
+    'loginError'
+  );
+
+const logoutBtn =
+  document.getElementById(
+    'logoutBtn'
+  );
+
+const qrContainer =
+  document.getElementById(
+    'qrcode'
+  );
+
+const countdownElement =
+  document.getElementById(
+    'countdown'
+  );
+
+const slotElement =
+  document.getElementById(
+    'slot'
+  );
+
+const statusElement =
+  document.getElementById(
+    'status'
+  );
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function setStatus(
+  message,
+  type
+) {
+
+  statusElement.textContent =
+    message;
+
+  statusElement.className =
+    'status';
+
+  if (type) {
+
+    statusElement.classList.add(
+      type
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CONFIGURATION
+   ========================================================= */
+
+function checkConfiguration() {
+
+  if (
+
+    !GOOGLE_SCRIPT_URL ||
+
+    GOOGLE_SCRIPT_URL ===
+      'MASUKKAN_URL_WEB_APP_V2_DI_SINI'
+
+  ) {
+
+    setStatus(
+      'URL Google Apps Script belum dimasukkan.',
+      'error'
+    );
+
+    return false;
+
+  }
+
+  return true;
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+function handleLogin() {
+
+  const username =
+    usernameInput.value.trim();
+
+  const password =
+    passwordInput.value;
+
+
+  /* -----------------------------------------------------
+     VALIDATE INPUT
+     ----------------------------------------------------- */
+
+  if (!username || !password) {
+
+    loginError.textContent =
+      'Sila masukkan username dan password.';
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------------------
+     CHECK CREDENTIALS
+     ----------------------------------------------------- */
+
+  if (
+    username === ADMIN_USERNAME &&
+    password === ADMIN_PASSWORD
+  ) {
+
+    /* ---------------------------------------------------
+       LOGIN SUCCESS
+       --------------------------------------------------- */
+
+    loginError.textContent = '';
+
+    isLoggedIn = true;
+
+    loginCard.classList.add(
+      'hidden'
+    );
+
+    qrCard.classList.remove(
+      'hidden'
+    );
+
+    passwordInput.value = '';
+
+
+    /* ---------------------------------------------------
+       START SYSTEM
+       --------------------------------------------------- */
+
+    startSystem();
+
+
+  }
+  else {
+
+    /* ---------------------------------------------------
+       LOGIN FAILED
+       --------------------------------------------------- */
+
+    loginError.textContent =
+      'Username atau password salah.';
+
+    passwordInput.value = '';
+
+    passwordInput.focus();
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+function handleLogout() {
+
+  /* -----------------------------------------------------
+     CONFIRM
+     ----------------------------------------------------- */
+
+  const confirmed =
+    confirm(
+      'Adakah anda pasti ingin log keluar?'
+    );
+
+  if (!confirmed) {
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------------------
+     STOP SYSTEM
+     ----------------------------------------------------- */
+
+  stopSystem();
+
+
+  /* -----------------------------------------------------
+     RESET STATE
+     ----------------------------------------------------- */
+
+  isLoggedIn = false;
+
+  currentToken = '';
+
+  currentSlot = null;
+
+  nextChangeTime = 0;
+
+  loadingQR = false;
+
+
+  /* -----------------------------------------------------
+     RESET UI
+     ----------------------------------------------------- */
+
+  qrContainer.innerHTML = `
+
+    <div class="loading">
+
+      <div class="spinner"></div>
+
+      Menyediakan QR...
+
+    </div>
+
+  `;
+
+  countdownElement.textContent =
+    '--s';
+
+  countdownElement.classList.remove(
+    'warning'
+  );
+
+  countdownElement.classList.remove(
+    'danger'
+  );
+
+  slotElement.textContent =
+    'Slot: --';
+
+  setStatus(
+    'Menghubungkan ke server...',
+    'loading'
+  );
+
+
+  /* -----------------------------------------------------
+     SHOW LOGIN
+     ----------------------------------------------------- */
+
+  qrCard.classList.add(
+    'hidden'
+  );
+
+  loginCard.classList.remove(
+    'hidden'
+  );
+
+  usernameInput.value = '';
+
+  passwordInput.value = '';
+
+  loginError.textContent = '';
+
+  usernameInput.focus();
+
+}
+
+
+/* =========================================================
+   START / STOP SYSTEM
+   ========================================================= */
+
+function startSystem() {
+
+  /* -----------------------------------------------------
+     CHECK CONFIG
+     ----------------------------------------------------- */
+
+  if (!checkConfiguration()) {
+
+    return;
+
+  }
+
+
+  /* -----------------------------------------------------
+     LOAD FIRST QR
+     ----------------------------------------------------- */
+
+  loadQR();
+
+
+  /* -----------------------------------------------------
+     COUNTDOWN TIMER
+     ----------------------------------------------------- */
+
+  if (countdownIntervalId === null) {
+
+    countdownIntervalId =
+      setInterval(
+        function() {
+          updateCountdown();
+        },
+        250
+      );
+
+  }
+
+
+  /* -----------------------------------------------------
+     BACKUP CHECK
+     ----------------------------------------------------- */
+
+  if (backupIntervalId === null) {
+
+    backupIntervalId =
+      setInterval(
+        function() {
+
+          if (!isLoggedIn) {
+
+            return;
+
+          }
+
+
+          if (loadingQR) {
+
+            return;
+
+          }
+
+
+          if (!currentToken) {
+
+            loadQR();
+
+            return;
+
+          }
+
+
+          if (
+            nextChangeTime <=
+            Date.now()
+          ) {
+
+            loadQR();
+
+          }
+
+        },
+        2000
+      );
+
+  }
+
+}
+
+
+function stopSystem() {
+
+  /* -----------------------------------------------------
+     CLEAR TIMERS
+     ----------------------------------------------------- */
+
+  if (countdownIntervalId !== null) {
+
+    clearInterval(
+      countdownIntervalId
+    );
+
+    countdownIntervalId = null;
+
+  }
+
+
+  if (backupIntervalId !== null) {
+
+    clearInterval(
+      backupIntervalId
+    );
+
+    backupIntervalId = null;
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD QR
+   ========================================================= */
+
+async function loadQR() {
+
+
+  if (loadingQR) {
+
+    return;
+
+  }
+
+
+  if (!isLoggedIn) {
+
+    return;
+
+  }
+
+
+  loadingQR = true;
+
+
+  try {
+
+
+    setStatus(
+      'Menghubungkan ke server...',
+      'loading'
+    );
+
+
+    /* -----------------------------------------------------
+       REQUEST
+       ----------------------------------------------------- */
+
+    const response =
+      await fetch(
+
+        GOOGLE_SCRIPT_URL,
+
+        {
+
+          method:
+            'POST',
+
+          headers: {
+
+            'Content-Type':
+              'text/plain;charset=utf-8'
+
+          },
+
+          body:
+            JSON.stringify({
+
+              action:
+                'getQR'
+
+            }),
+
+          cache:
+            'no-store'
+
+        }
+
+      );
+
+
+    /* -----------------------------------------------------
+       RESPONSE
+       ----------------------------------------------------- */
+
+    const result =
+      await response.json();
+
+
+    /* -----------------------------------------------------
+       DEBUG
+       ----------------------------------------------------- */
+
+    console.log(
+      'V2.3 SERVER RESPONSE:',
+      result
+    );
+
+
+    /* -----------------------------------------------------
+       VALIDATE
+       ----------------------------------------------------- */
+
+    if (
+      !result
+    ) {
+
+      throw new Error(
+        'Server tidak memberi response.'
+      );
+
+    }
+
+
+    if (
+      !result.success
+    ) {
+
+      throw new Error(
+
+        result.message ||
+        'Server gagal menghasilkan QR.'
+
+      );
+
+    }
+
+
+    if (
+      !result.token
+    ) {
+
+      throw new Error(
+        'Token QR tidak diterima.'
+      );
+
+    }
+
+
+    /* -----------------------------------------------------
+       TOKEN
+       ----------------------------------------------------- */
+
+    const token =
+      String(
+        result.token
+      );
+
+
+    currentToken =
+      token;
+
+
+    /* -----------------------------------------------------
+       SLOT
+       ----------------------------------------------------- */
+
+    if (
+      result.slot !== undefined &&
+      result.slot !== null
+    ) {
+
+      currentSlot =
+        Number(
+          result.slot
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       RENDER QR
+       ----------------------------------------------------- */
+
+    renderQR(
+      currentToken
+    );
+
+
+    /* -----------------------------------------------------
+       COUNTDOWN
+       ----------------------------------------------------- */
+
+    nextChangeTime =
+      Date.now() +
+      QR_INTERVAL_MS;
+
+
+    updateCountdown();
+
+
+    /* -----------------------------------------------------
+       SLOT DISPLAY
+       ----------------------------------------------------- */
+
+    if (
+      currentSlot !== null &&
+      Number.isFinite(
+        currentSlot
+      )
+    ) {
+
+      slotElement.textContent =
+        'Slot: ' +
+        currentSlot;
+
+    }
+    else {
+
+      slotElement.textContent =
+        'QR Aktif';
+
+    }
+
+
+    /* -----------------------------------------------------
+       STATUS
+       ----------------------------------------------------- */
+
+    setStatus(
+      '● SISTEM ONLINE',
+      'online'
+    );
+
+
+  }
+  catch (
+    error
+  ) {
+
+
+    console.error(
+      'V2.3 QR ERROR:',
+      error
+    );
+
+
+    setStatus(
+      'Tidak dapat disambung kepada server.',
+      'error'
+    );
+
+
+    countdownElement.textContent =
+      '--s';
+
+  }
+  finally {
+
+    loadingQR =
+      false;
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER QR
+   ========================================================= */
+
+function renderQR(
+  token
+) {
+
+
+  qrContainer.innerHTML =
+    '';
+
+
+  try {
+
+
+    new QRCode(
+
+      qrContainer,
+
+      {
+
+        text:
+          token,
+
+        width:
+          420,
+
+        height:
+          420,
+
+        colorDark:
+          '#000000',
+
+        colorLight:
+          '#ffffff',
+
+        correctLevel:
+          QRCode.CorrectLevel.H
+
+      }
+
+    );
+
+
+  }
+  catch (
+    error
+  ) {
+
+
+    console.error(
+      'QR GENERATOR ERROR:',
+      error
+    );
+
+
+    qrContainer.innerHTML = `
+
+      <div class="loading">
+
+        QR gagal dijana.
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   COUNTDOWN
+   ========================================================= */
+
+function updateCountdown() {
+
+
+  if (!isLoggedIn) {
+
+    return;
+
+  }
+
+
+  /*
+   * Belum dapat QR
+   */
+
+  if (
+    !currentToken ||
+    !nextChangeTime
+  ) {
+
+    countdownElement.textContent =
+      '--s';
+
+    return;
+
+  }
+
+
+  /* -------------------------------------------------------
+     BAKI MILISAAT
+     ------------------------------------------------------- */
+
+  const remaining =
+    nextChangeTime -
+    Date.now();
+
+
+  /* -------------------------------------------------------
+     QR TAMAT
+     ------------------------------------------------------- */
+
+  if (
+    remaining <= 0
+  ) {
+
+
+    countdownElement.textContent =
+      '0s';
+
+
+    countdownElement.classList.remove(
+      'warning'
+    );
+
+
+    countdownElement.classList.remove(
+      'danger'
+    );
+
+
+    loadQR();
+
+
+    return;
+
+  }
+
+
+  /* -------------------------------------------------------
+     SAAT
+     ------------------------------------------------------- */
+
+  let seconds =
+    Math.ceil(
+      remaining / 1000
+    );
+
+
+  /* -------------------------------------------------------
+     SAFETY
+     ------------------------------------------------------- */
+
+  if (
+    !Number.isFinite(
+      seconds
+    )
+  ) {
+
+    countdownElement.textContent =
+      '--s';
+
+    return;
+
+  }
+
+
+  if (
+    seconds < 1
+  ) {
+
+    seconds = 1;
+
+  }
+
+
+  if (
+    seconds > QR_INTERVAL_SECONDS
+  ) {
+
+    seconds =
+      QR_INTERVAL_SECONDS;
+
+  }
+
+
+  /* -------------------------------------------------------
+     DISPLAY
+     ------------------------------------------------------- */
+
+  countdownElement.textContent =
+    seconds + 's';
+
+
+  /* -------------------------------------------------------
+     RESET CLASS
+     ------------------------------------------------------- */
+
+  countdownElement.classList.remove(
+    'warning'
+  );
+
+  countdownElement.classList.remove(
+    'danger'
+  );
+
+
+  /* -------------------------------------------------------
+     10 SAAT
+     ------------------------------------------------------- */
+
+  if (
+    seconds <= 10 &&
+    seconds > 5
+  ) {
+
+    countdownElement.classList.add(
+      'warning'
+    );
+
+  }
+
+
+  /* -------------------------------------------------------
+     5 SAAT
+     ------------------------------------------------------- */
+
+  if (
+    seconds <= 5
+  ) {
+
+    countdownElement.classList.add(
+      'danger'
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   EVENT LISTENERS
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   LOGIN BUTTON
+   --------------------------------------------------------- */
+
+loginBtn.addEventListener(
+  'click',
+  handleLogin
+);
+
+
+/* ---------------------------------------------------------
+   ENTER KEY ON INPUTS
+   --------------------------------------------------------- */
+
+usernameInput.addEventListener(
+  'keydown',
+  function(event) {
+
+    if (event.key === 'Enter') {
+
+      passwordInput.focus();
+
+    }
+
+  }
+);
+
+
+passwordInput.addEventListener(
+  'keydown',
+  function(event) {
+
+    if (event.key === 'Enter') {
+
+      handleLogin();
+
+    }
+
+  }
+);
+
+
+/* ---------------------------------------------------------
+   LOGOUT BUTTON
+   --------------------------------------------------------- */
+
+logoutBtn.addEventListener(
+  'click',
+  handleLogout
+);
+
+
+/* ---------------------------------------------------------
+   BROWSER TAB AKTIF SEMULA
+   --------------------------------------------------------- */
+
+document.addEventListener(
+
+  'visibilitychange',
+
+  function() {
+
+    if (
+      document.visibilityState ===
+      'visible' &&
+      isLoggedIn
+    ) {
+
+      loadQR();
+
+    }
+
+  }
+
+);
+
+
+/* ---------------------------------------------------------
+   WINDOW FOCUS
+   --------------------------------------------------------- */
+
+window.addEventListener(
+
+  'focus',
+
+  function() {
+
+    if (isLoggedIn) {
+
+      loadQR();
+
+    }
+
+  }
+
+);
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+usernameInput.focus();
+
+
+</script>
+
+
+</body>
+
+</html>
